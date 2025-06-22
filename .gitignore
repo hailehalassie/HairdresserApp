@@ -1,0 +1,26 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Core secret storage
+secrets.json
+
+# EF Migrations
+**/Migrations/
+
+# SQLite database file
+*.db
+
+# npm node_modules (if you add Angular frontend here)
+node_modules/
+dist/
+
+# Logs
+*.log
