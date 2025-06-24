@@ -9,6 +9,7 @@ using System.Text;
 using Application.Interfaces;
 using Infrastructure.Repositories;
 using Application.Interfaces.Repositories;
+using Application.Features.Appointments.Create;
 
 
 
@@ -42,8 +43,9 @@ builder.Services.AddAuthentication("Bearer")
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+    builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CreateAppointmentHandler).Assembly));
 
 
 var app = builder.Build();
@@ -51,7 +53,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var context = services.GetRequiredService<AppDbContext>();
+
+    await DbInitializer.SeedServicesAsync(context);
 
     string[] roles = new[] { "Customer", "Barber" };
 
@@ -59,7 +64,7 @@ using (var scope = app.Services.CreateScope())
     {
         if (!await roleManager.RoleExistsAsync(role))
         {
-            await roleManager.CreateAsync(new IdentityRole(role));
+            await roleManager.CreateAsync(new IdentityRole<Guid>(role));
         }
     }
 }

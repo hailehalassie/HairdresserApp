@@ -1,5 +1,8 @@
+using Application.Features.Appointments.Create;
+using Application.Requests.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,31 +12,25 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AppointmentsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IMediator _mediator;
 
-        public AppointmentsController(AppDbContext context)
+        public AppointmentsController(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Appointment>>> GetAppointments()
-        {
-            var appointments = await _context.Appointments.ToListAsync();
-            return Ok(appointments);
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<List<Appointment>>> GetAppointments()
+        // {
+        //     var appointments = await _context.Appointments.ToListAsync();
+        //     return Ok(appointments);
+        // }
 
-        [HttpPost]
-        public async Task<ActionResult<Appointment>> CreateAppointment(Appointment appointment)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest request)
         {
-            if (appointment == null)
-            {
-                return BadRequest("Appointment cannot be null.");
-            }
-
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetAppointments), new { id = appointment.Id }, appointment);
+            var result = await _mediator.Send(new CreateAppointmentCmd(request));
+            return Ok(result);
         }
     }
 }
