@@ -1,17 +1,11 @@
-using System;
-
-namespace Domain.Entities
-{
-    public class Appointment
+namespace Application.Requests.Appointments
+{ 
+    public class CreateAppointmentRequest
     {
-        public Guid Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public Guid ServiceId { get; set; }
         public Guid BarberId { get; set; }
         public Guid CustomerId { get; set; }
-
-        public Service Service { get; set; } = null!;
-
     }
 }
