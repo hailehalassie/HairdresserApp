@@ -1,4 +1,5 @@
 using Application.Features.Appointments.Create;
+using Application.Features.Appointments.Get;
 using Application.Requests.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
@@ -31,6 +32,13 @@ namespace API.Controllers
         {
             var result = await _mediator.Send(new CreateAppointmentCmd(request));
             return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAppointment(Guid id)
+        {
+            var result = await _mediator.Send(new GetAppointmentQry(id));
+            return result != null ? Ok(result) : NotFound("Appointment not found");
         }
     }
 }
