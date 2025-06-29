@@ -18,6 +18,9 @@ namespace Infrastructure.Data.Configurations
             builder.Property(a => a.EndTime)
                 .IsRequired();
 
+            builder.Property(a => a.Status)
+                .IsRequired();
+
             builder.HasOne(a => a.Service)
                 .WithMany(s => s.Appointments)
                 .HasForeignKey(a => a.ServiceId)

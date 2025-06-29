@@ -11,5 +11,6 @@ namespace Application.Responses.Appointments
         public string BarberName { get; set; }
         public Guid CustomerId { get; set; }
         public string CustomerName { get; set; }
+        public string Status { get; set; } // Assuming Status is a string representation of the enum
     }
 }

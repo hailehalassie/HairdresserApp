@@ -30,7 +30,8 @@ namespace Infrastructure.Repositories
                     CustomerId = a.CustomerId,
                     CustomerName = customer.FirstName + " " + customer.LastName,
                     BarberId = a.BarberId,
-                    BarberName = barber.FirstName + " " + barber.LastName
+                    BarberName = barber.FirstName + " " + barber.LastName,
+                    Status = a.Status.ToString() 
                 }).FirstOrDefaultAsync();
 
             return result;
@@ -54,7 +55,8 @@ namespace Infrastructure.Repositories
                     CustomerId = a.CustomerId,
                     CustomerName = customer.FirstName + " " + customer.LastName,
                     BarberId = a.BarberId,
-                    BarberName = barber.FirstName + " " + barber.LastName
+                    BarberName = barber.FirstName + " " + barber.LastName,
+                    Status = a.Status.ToString()
                 }).ToListAsync();
 
             return result;
@@ -78,7 +80,8 @@ namespace Infrastructure.Repositories
                     CustomerId = a.CustomerId,
                     CustomerName = customer.FirstName + " " + customer.LastName,
                     BarberId = a.BarberId,
-                    BarberName = barber.FirstName + " " + barber.LastName
+                    BarberName = barber.FirstName + " " + barber.LastName,
+                    Status = a.Status.ToString()
                 }).ToListAsync();
 
             return result;
