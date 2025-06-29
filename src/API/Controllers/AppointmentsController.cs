@@ -1,5 +1,6 @@
 using Application.Features.Appointments.Create;
 using Application.Features.Appointments.Get;
+using Application.Features.Appointments.GetByBarber;
 using Application.Requests.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
@@ -20,13 +21,6 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<Appointment>>> GetAppointments()
-        // {
-        //     var appointments = await _context.Appointments.ToListAsync();
-        //     return Ok(appointments);
-        // }
-
         [HttpPost("create")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest request)
         {
@@ -39,6 +33,13 @@ namespace API.Controllers
         {
             var result = await _mediator.Send(new GetAppointmentQry(id));
             return result != null ? Ok(result) : NotFound("Appointment not found");
+        }
+
+        [HttpGet("barber/{barberId}")]
+        public async Task<IActionResult> GetAppointmentsByBarber(Guid barberId)
+        { 
+            var result = await _mediator.Send(new GetByBarberQry(barberId));
+            return result != null && result.Count > 0 ? Ok(result) : NotFound("No appointments found for this barber");
         }
     }
 }
