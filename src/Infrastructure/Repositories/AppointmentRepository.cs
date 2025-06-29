@@ -2,6 +2,7 @@ using Application.Interfaces.Repositories;
 using Application.Responses.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -44,7 +45,8 @@ namespace Infrastructure.Repositories
                 join barber in _context.Users on a.BarberId equals barber.Id
                 join customer in _context.Users on a.CustomerId equals customer.Id
                 join service in _context.Services on a.ServiceId equals service.Id
-                where a.BarberId == barberId
+                where a.BarberId == barberId && a.Status != Status.Cancelled
+                orderby a.StartTime descending
                 select new AppointmentDetailsResponse
                 {
                     Id = a.Id,
@@ -69,7 +71,8 @@ namespace Infrastructure.Repositories
                 join barber in _context.Users on a.BarberId equals barber.Id
                 join customer in _context.Users on a.CustomerId equals customer.Id
                 join service in _context.Services on a.ServiceId equals service.Id
-                where a.CustomerId == customerId
+                where a.CustomerId == customerId && a.Status != Status.Cancelled
+                orderby a.StartTime descending
                 select new AppointmentDetailsResponse
                 {
                     Id = a.Id,

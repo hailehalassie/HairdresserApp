@@ -7,6 +7,7 @@ using Application.Requests.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = "Customer, Barber")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest request)
         {
             var result = await _mediator.Send(new CreateAppointmentCmd(request));
@@ -37,7 +39,9 @@ namespace API.Controllers
             return result != null ? Ok(result) : NotFound("Appointment not found");
         }
 
+
         [HttpGet("barber/{barberId}")]
+        [Authorize(Roles = "Barber")]
         public async Task<IActionResult> GetAppointmentsByBarber(Guid barberId)
         {
             var result = await _mediator.Send(new GetByBarberQry(barberId));
@@ -45,6 +49,7 @@ namespace API.Controllers
         }
 
         [HttpGet("customer/{customerId}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetAppointmentsByCustomer(Guid customerId)
         {
             var result = await _mediator.Send(new GetByCustomerQry(customerId));
@@ -52,8 +57,9 @@ namespace API.Controllers
         }
 
         [HttpPut("update-status")]
+        [Authorize(Roles = "Barber")]
         public async Task<IActionResult> UpdateAppointmentStatus([FromBody] UpdateStatusRequest request)
-        { 
+        {
             if (request.AppointmentId == Guid.Empty)
             {
                 return BadRequest("Appointment ID cannot be empty.");
@@ -68,5 +74,7 @@ namespace API.Controllers
             var updateResult = await _mediator.Send(new UpdateStatusCmd(request));
             return Ok(updateResult);
         }
+
+        //Add endpoint to cancel appointment for customers
     }
 }

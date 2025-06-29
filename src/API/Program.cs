@@ -10,6 +10,8 @@ using Application.Interfaces;
 using Infrastructure.Repositories;
 using Application.Interfaces.Repositories;
 using Application.Features.Appointments.Create;
+using FluentValidation;
+using Application.Features.Appointments.UpdateStatus;
 
 
 
@@ -46,7 +48,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateAppointmentHandler).Assembly));
-
+builder.Services.AddValidatorsFromAssemblyContaining<CreateAppointmentValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateStatusValidator>();
 
 var app = builder.Build();
 
