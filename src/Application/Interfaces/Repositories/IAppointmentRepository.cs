@@ -7,5 +7,6 @@ namespace Application.Interfaces.Repositories
     {
         Task<AppointmentDetailsResponse?> GetAppointmentById(Guid appointmentId);
         Task<List<AppointmentDetailsResponse>> GetAppointmentsByBarberId(Guid barberId);
+        Task<List<AppointmentDetailsResponse>> GetAppointmentsByCustomerId(Guid customerId);
     }
 }

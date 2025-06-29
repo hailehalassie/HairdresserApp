@@ -1,6 +1,7 @@
 using Application.Features.Appointments.Create;
 using Application.Features.Appointments.Get;
 using Application.Features.Appointments.GetByBarber;
+using Application.Features.Appointments.GetByCustomer;
 using Application.Requests.Appointments;
 using Domain.Entities;
 using Infrastructure.Data;
@@ -37,9 +38,16 @@ namespace API.Controllers
 
         [HttpGet("barber/{barberId}")]
         public async Task<IActionResult> GetAppointmentsByBarber(Guid barberId)
-        { 
+        {
             var result = await _mediator.Send(new GetByBarberQry(barberId));
             return result != null && result.Count > 0 ? Ok(result) : NotFound("No appointments found for this barber");
+        }
+
+        [HttpGet("customer/{customerId}")]
+        public async Task<IActionResult> GetAppointmentsByCustomer(Guid customerId)
+        { 
+            var result = await _mediator.Send(new GetByCustomerQry(customerId));
+            return result != null && result.Count > 0 ? Ok(result) : NotFound("No appointments found for this customer");
         }
     }
 }

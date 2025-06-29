@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories
         public AppointmentRepository(AppDbContext context) : base(context)
         {
         }
-        
+
         public async Task<AppointmentDetailsResponse?> GetAppointmentById(Guid appointmentId)
         {
             var result = await (
@@ -44,6 +44,30 @@ namespace Infrastructure.Repositories
                 join customer in _context.Users on a.CustomerId equals customer.Id
                 join service in _context.Services on a.ServiceId equals service.Id
                 where a.BarberId == barberId
+                select new AppointmentDetailsResponse
+                {
+                    Id = a.Id,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                    ServiceId = a.ServiceId,
+                    ServiceName = service.Name,
+                    CustomerId = a.CustomerId,
+                    CustomerName = customer.FirstName + " " + customer.LastName,
+                    BarberId = a.BarberId,
+                    BarberName = barber.FirstName + " " + barber.LastName
+                }).ToListAsync();
+
+            return result;
+        }
+        
+        public async Task<List<AppointmentDetailsResponse>> GetAppointmentsByCustomerId(Guid customerId)
+        {
+            var result = await (
+                from a in _context.Appointments
+                join barber in _context.Users on a.BarberId equals barber.Id
+                join customer in _context.Users on a.CustomerId equals customer.Id
+                join service in _context.Services on a.ServiceId equals service.Id
+                where a.CustomerId == customerId
                 select new AppointmentDetailsResponse
                 {
                     Id = a.Id,
