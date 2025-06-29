@@ -12,6 +12,7 @@ using Application.Interfaces.Repositories;
 using Application.Features.Appointments.Create;
 using FluentValidation;
 using Application.Features.Appointments.UpdateStatus;
+using API.Middleware;
 
 
 
@@ -99,6 +100,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandling();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
