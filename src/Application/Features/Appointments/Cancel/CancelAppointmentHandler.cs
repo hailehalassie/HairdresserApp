@@ -1,3 +1,4 @@
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Application.Responses.Appointments;
@@ -11,23 +12,19 @@ namespace Application.Features.Appointments.Cancel
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly CancelAppointmentValidator _validator = new CancelAppointmentValidator();
 
-        public CancelAppointmentHandler(IAppointmentRepository appointmentRepository, IUnitOfWork unitOfWork, CancelAppointmentValidator validator)
+        public CancelAppointmentHandler(IAppointmentRepository appointmentRepository, IUnitOfWork unitOfWork)
         {
             _appointmentRepository = appointmentRepository;
             _unitOfWork = unitOfWork;
-            _validator = validator;
         }
 
         public async Task<CancelAppointmentResponse> Handle(CancelAppointmentCmd request, CancellationToken cancellationToken)
-        {
-            await _validator.ValidateAndThrowAsync(request, cancellationToken);
-            
+        {   
             var appointment = await _appointmentRepository.GetByIdAsync(request.Id);
             if (appointment == null)
             {
-                throw new Exception("Appointment not found.");
+                throw new NotFoundException("Appointment not found.");
             }
 
             appointment.Status = Status.Cancelled;

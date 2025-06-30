@@ -1,5 +1,6 @@
 namespace Application.Features.Appointments.Get
 {
+    using Application.Exceptions;
     using Application.Interfaces.Repositories;
     using Application.Responses.Appointments;
     using MediatR;
@@ -15,7 +16,13 @@ namespace Application.Features.Appointments.Get
 
         public async Task<AppointmentDetailsResponse?> Handle(GetAppointmentQry request, CancellationToken cancellationToken)
         {
-            return await _appointmentRepository.GetAppointmentById(request.Id);
+            var appointment = await _appointmentRepository.GetAppointmentById(request.Id);
+            if (appointment == null)
+            {
+                throw new NotFoundException("Appointment not found.");
+            }
+
+            return appointment;
         }
     }
 }

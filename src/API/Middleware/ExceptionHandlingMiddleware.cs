@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text.Json;
+using Application.Exceptions;
+using API.Models;
 
 namespace API.Middleware
 {
@@ -25,15 +27,38 @@ namespace API.Middleware
                 _logger.LogError(ex, "An unhandled exception occurred.");
 
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                // context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                var response = new
+               var response = new ErrorResponse();
+                int statusCode;
+
+                switch (ex)
                 {
-                    StatusCode = context.Response.StatusCode,
-                    Message = "An internal server error occurred.",
-                    Detail = ex.Message // Optional: hide in production
-                };
+                    case ValidationException validationEx:
+                        statusCode = validationEx.StatusCode;
+                        response.Message = validationEx.Message;
+                        response.Errors = validationEx.Errors
+                                            .SelectMany(kvp => kvp.Value)
+                                            .ToList();
+                        break;
+                    
+                    case NotFoundException notFoundEx:
+                        statusCode = notFoundEx.StatusCode;
+                        response.Message = notFoundEx.Message;
+                        break;
 
+                    case AppException appEx:
+                        statusCode = appEx.StatusCode;
+                        response.Message = appEx.Message;
+                        break;
+
+                    default:
+                        statusCode = (int)HttpStatusCode.InternalServerError;
+                        response.Message = "An unexpected error occurred.";
+                        break;
+                }
+
+                context.Response.StatusCode = statusCode;
                 var json = JsonSerializer.Serialize(response);
                 await context.Response.WriteAsync(json);
             }
