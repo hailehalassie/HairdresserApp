@@ -3,6 +3,7 @@ using Application.Features.Appointments.Create;
 using Application.Features.Appointments.Get;
 using Application.Features.Appointments.GetByBarber;
 using Application.Features.Appointments.GetByCustomer;
+using Application.Features.Appointments.GetCreateAppointmentFormData;
 using Application.Features.Appointments.UpdateStatus;
 using Application.Requests.Appointments;
 using Domain.Entities;
@@ -26,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        // [Authorize(Roles = "Customer, Barber")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest request)
         {
             var result = await _mediator.Send(new CreateAppointmentCmd(request));
@@ -78,12 +79,19 @@ namespace API.Controllers
 
         //Add endpoint to cancel appointment for customers
         [HttpPut("cancel/{id}")]
-        [Authorize(Roles = "Customer")]
-        [Authorize(Roles = "Barber")]
+        [Authorize(Roles = "Customer,Barber")]
         public async Task<IActionResult> CancelAppointment(Guid id)
         {
             var cancelResult = await _mediator.Send(new CancelAppointmentCmd(id));
             return Ok(cancelResult);
+        }
+
+        [HttpGet("create-form-data")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetCreateAppointmentFormData()
+        {
+            var result = await _mediator.Send(new GetCreateAppointmentFormDataQry());
+            return Ok(result);
         }
     }
 }

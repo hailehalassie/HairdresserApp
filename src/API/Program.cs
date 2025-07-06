@@ -65,12 +65,20 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserService, UserService>();
 
     builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateAppointmentHandler).Assembly));
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAppointmentValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateStatusValidator>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:4200") // Angular default port
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -99,9 +107,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// app.UseRouting();
 app.UseExceptionHandling();
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
