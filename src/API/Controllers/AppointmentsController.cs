@@ -1,6 +1,7 @@
 using Application.Features.Appointments.Cancel;
 using Application.Features.Appointments.Create;
 using Application.Features.Appointments.Get;
+using Application.Features.Appointments.GetBarbersTimetable;
 using Application.Features.Appointments.GetByBarber;
 using Application.Features.Appointments.GetByCustomer;
 using Application.Features.Appointments.GetCreateAppointmentFormData;
@@ -77,7 +78,6 @@ namespace API.Controllers
             return Ok(updateResult);
         }
 
-        //Add endpoint to cancel appointment for customers
         [HttpPut("cancel/{id}")]
         [Authorize(Roles = "Customer,Barber")]
         public async Task<IActionResult> CancelAppointment(Guid id)
@@ -91,6 +91,13 @@ namespace API.Controllers
         public async Task<IActionResult> GetCreateAppointmentFormData()
         {
             var result = await _mediator.Send(new GetCreateAppointmentFormDataQry());
+            return Ok(result);
+        }
+
+        [HttpGet("barber-timetable/{barberId}/{date}")]
+        public async Task<IActionResult> GetBarberTimetable(Guid barberId, DateTime date)
+        {
+            var result = await _mediator.Send(new GetBarbersTimetableQry(barberId, date));
             return Ok(result);
         }
     }
